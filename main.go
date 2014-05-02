@@ -12,16 +12,31 @@ const whitespace = " \t"
 
 func main() {
 	log.SetFlags(log.Lshortfile)
-	if len(os.Args) < 2 {
+	if len(os.Args) < 2 { // Go home
 		fmt.Println(os.Getenv("HOME"))
 		return
-	}
+	} else if len(os.Args) == 2 && os.Args[1] != "-complete" { // Go somewhere
+		shortcuts := loadShortcuts(os.Getenv("HOME") + "/.goto")
+		if dir, ok := shortcuts[os.Args[1]]; ok {
+			fmt.Println(dir)
+		} else {
+			log.Fatalf("No such shortcut %s", os.Args[1])
+		}
+	} else if len(os.Args) <= 3 && os.Args[1] == "-complete" { // Go complete
+		shortcuts := loadShortcuts(os.Getenv("HOME") + "/.goto")
 
-	shortcuts := loadShortcuts(os.Getenv("HOME") + "/.goto")
-	if dir, ok := shortcuts[os.Args[1]]; ok {
-		fmt.Println(dir)
+		var prefix string
+		if len(os.Args) == 3 {
+			prefix = os.Args[2]
+		}
+
+		for key := range shortcuts {
+			if strings.HasPrefix(key, prefix) {
+				fmt.Println(key)
+			}
+		}
 	} else {
-		log.Fatalf("No such shortcut %s", os.Args[1])
+		log.Fatal("Improper usage...")
 	}
 }
 
