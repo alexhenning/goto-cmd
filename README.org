@@ -1,0 +1,12 @@
+
+
+* Installation
+: $ go install github.com/alexhenning/goto-cmd
+
+Add the following to your .bashrc
+: function goto() { cd $(goto-cmd $1); }
+
+* Usage
+: $ goto
+: $ goto tag
+: $ goto github.com/alexhenning/goto-cmd
