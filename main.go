@@ -53,5 +53,5 @@ func complete() error {
 }
 
 func getSources() source {
-	return NewFileSource(os.Getenv("HOME") + "/.goto")
+	return Merge(NewFileSource(os.Getenv("HOME")+"/.goto"), NewGoSource())
 }
