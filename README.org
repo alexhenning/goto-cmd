@@ -41,7 +41,7 @@ Example:
 : 
 : ~go     ~/Dropbox/Programming/go
 : me      ~/Dropbox/Programming/go/src/github.com/alexhenning
-:
+: 
 : # Unrelated to go, just a shortcut
 : school  ~/Dropbox/School
 
