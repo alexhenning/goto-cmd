@@ -1,5 +1,4 @@
 
-
 * Installation
 : $ go install github.com/alexhenning/goto-cmd
 
@@ -23,7 +22,29 @@ Add the following to your =.bashrc=:
 :
 : complete -o nospace -F _complete_goto goto
 
+** Add shortcuts [Optional]
+Create a file =~/.goto=. The format for the =~/.goto= file is a pair
+of labels and corresponding paths. Blank lines and lines beginning
+with =#= are ignored.
+
+Example:
+: # label path
+: 
+: ~go     ~/Dropbox/Programming/go
+: me      ~/Dropbox/Programming/go/src/github.com/alexhenning
+
 * Usage
+The following examples show how to use the goto command, it's pretty
+straightforward.
+
 : $ goto
-: $ goto tag
+: # $PWD = $HOME
+
+: $ goto me
+: # $PWD = ~/Dropbox/Programming/go/src/github.com/alexhenning
+
+: $ goto me/goto-cmd
+: # $PWD = ~/Dropbox/Programming/go/src//github.com/alexhenning/goto-cmd
+
 : $ goto github.com/alexhenning/goto-cmd
+: # $PWD = $GOPATH/github.com/alexhenning/goto-cmd
