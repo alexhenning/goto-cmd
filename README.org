@@ -1,5 +1,16 @@
 
-* Installation
+* goto
+goto (aka goto-cmd) is is a smart cd command for the Go programming
+language. It's inspired by [[http://wiki.ros.org/rosbash#roscd][roscd]] and allows you to cd into a directory
+using the Go import path. It reflects the $GOROOT and $GOPATH of the
+environment it's run in, so if you're using =gvm= with different go
+versions in different terminals, it will go act appropriately.
+
+In addition to the going to go import paths, you can add additional
+shortcuts in the =~/.goto= file, as described below. These can be
+related to Go or completely unrelated.
+
+** Installation
 : $ go install github.com/alexhenning/goto-cmd
 
 Add the following to your =.bashrc=:
@@ -14,15 +25,13 @@ Add the following to your =.bashrc=:
 :         cd $(goto-cmd $1)
 :     fi
 : }
-:
 : function _complete_goto() {
 :     local word=${COMP_WORDS[COMP_CWORD]}
 :     COMPREPLY=($(compgen -W "`goto-cmd -complete ${word}`" -- "${word}"))
 : }
-:
 : complete -o nospace -F _complete_goto goto
 
-** Add shortcuts [Optional]
+*** Add shortcuts [Optional]
 Create a file =~/.goto=. The format for the =~/.goto= file is a pair
 of labels and corresponding paths. Blank lines and lines beginning
 with =#= are ignored.
@@ -32,10 +41,16 @@ Example:
 : 
 : ~go     ~/Dropbox/Programming/go
 : me      ~/Dropbox/Programming/go/src/github.com/alexhenning
+:
+: # Unrelated to go, just a shortcut
+: school  ~/Dropbox/School
 
-* Usage
+** Usage
 The following examples show how to use the goto command, it's pretty
 straightforward.
+
+*** To =cd=:
+Typical usage will go to the desired directory:
 
 : $ goto
 : # $PWD = $HOME
@@ -48,3 +63,25 @@ straightforward.
 
 : $ goto github.com/alexhenning/goto-cmd
 : # $PWD = $GOPATH/github.com/alexhenning/goto-cmd
+
+: $ goto net/rpc
+: # $PWD = ~/.gvm/gos/go1.2.1/src/pkg/net/rpc
+
+*** To get help:
+Help can be gotten with =-h=, =-help=, or =--help=:
+: $ goto -help
+: # goto [-complete] dir
+: # 
+: # Goes to the given directory if possible otherwise. If "-complete" is
+: # present, instead of returning the directory to cd into, it returns a
+: # list of the possible completions.
+
+*** To get completions:
+The goto command can also be used to provide completions, this is used
+to provide tab completion. It's as simple as:
+: $ goto -complete m
+: # me/
+: # mqp/
+: # mqp-src/
+: # math/
+: # mime/
