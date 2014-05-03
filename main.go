@@ -11,6 +11,8 @@ func main() {
 	var err error
 	if len(os.Args) < 2 {
 		fmt.Println(os.Getenv("HOME"))
+	} else if os.Args[1] == "-h" || os.Args[1] == "-help" || os.Args[1] == "--help" {
+		fmt.Fprintln(os.Stderr, Usage)
 	} else if len(os.Args) == 2 && os.Args[1] != "-complete" {
 		err = gocd()
 	} else if len(os.Args) <= 3 && os.Args[1] == "-complete" {
