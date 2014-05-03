@@ -9,7 +9,7 @@ Add the following to your .bashrc
 :     local word=${COMP_WORDS[COMP_CWORD]}
 :     COMPREPLY=($(compgen -W "`goto-cmd -complete ${word}`" -- "${word}"))
 : }
-: complete -F _complete_goto goto
+: complete -o nospace -F _complete_goto goto
 
 * Usage
 : $ goto
