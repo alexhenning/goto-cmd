@@ -17,7 +17,7 @@ import (
 func NewFileSource(file string) Source {
 	contents, err := ioutil.ReadFile(file)
 	if err != nil {
-		log.Fatal(err)
+		return &fileSource{}
 	}
 
 	shortcuts := make(map[string]string)
