@@ -73,12 +73,16 @@ func (s *fileSource) Complete(prefix string) []string {
 }
 
 func (s *fileSource) expand(str string) (string, error) {
+	path, length := "", -1
 	for key := range s.shortcuts {
-		if strings.HasPrefix(str, key) {
-			return s.shortcuts[key] + string(os.PathSeparator) + strings.TrimPrefix(str, key), nil
+		if strings.HasPrefix(str, key) && len(key) > length {
+			path, length = s.shortcuts[key]+strings.TrimPrefix(str, key), len(key)
 		}
 	}
-	return "", errors.New(fmt.Sprintf("can't", str))
+	if length == -1 {
+		return "", errors.New(fmt.Sprintf("can't", str))
+	}
+	return path, nil
 }
 
 const whitespace = " \t"
