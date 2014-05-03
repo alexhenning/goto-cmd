@@ -1,32 +1,30 @@
 package main
 
 import (
-	"errors"
 	"fmt"
-	"log"
 	"os"
 )
 
-const whitespace = " \t"
-
+// main provides either a directory to cd into, a list of completion
+// or usage instructions.
 func main() {
-	log.SetFlags(log.Lshortfile)
-
 	var err error
-	if len(os.Args) < 2 { // Go home
+	if len(os.Args) < 2 {
 		fmt.Println(os.Getenv("HOME"))
-	} else if len(os.Args) == 2 && os.Args[1] != "-complete" { // Go somewhere
+	} else if len(os.Args) == 2 && os.Args[1] != "-complete" {
 		err = gocd()
-	} else if len(os.Args) <= 3 && os.Args[1] == "-complete" { // Go complete
+	} else if len(os.Args) <= 3 && os.Args[1] == "-complete" {
 		err = complete()
 	} else {
-		err = errors.New("Improper usage...")
+		fmt.Fprintln(os.Stderr, Usage)
 	}
+
 	if err != nil {
-		log.Fatal(err)
+		fmt.Fprintln(os.Stderr, err)
 	}
 }
 
+// gocd prints the directory to cd to stdout.
 func gocd() error {
 	source := getSources()
 	dir, err := source.Goto(os.Args[1])
@@ -37,6 +35,7 @@ func gocd() error {
 	return nil
 }
 
+// complete print a list of completions to stdout, one per line.
 func complete() error {
 	source := getSources()
 
@@ -52,6 +51,8 @@ func complete() error {
 	return nil
 }
 
-func getSources() source {
+// getSources returns the sources for completing from the users .goto
+// and the completions for the current Go source tree.
+func getSources() Source {
 	return Merge(NewFileSource(os.Getenv("HOME")+"/.goto"), NewGoSource())
 }

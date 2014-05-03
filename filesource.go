@@ -1,3 +1,6 @@
+// This file defines a Source that goes to and completes paths
+// provided by a file.
+
 package main
 
 import (
@@ -9,11 +12,9 @@ import (
 	"strings"
 )
 
-type FileSource struct {
-	shortcuts map[string]string
-}
-
-func NewFileSource(file string) source {
+// NewFileSource returns a Source that goes to and completes path
+// given by the file. The file format is given in the `doc.go` file.
+func NewFileSource(file string) Source {
 	contents, err := ioutil.ReadFile(file)
 	if err != nil {
 		log.Fatal(err)
@@ -33,18 +34,25 @@ func NewFileSource(file string) source {
 		}
 		shortcuts[fields[0]] = fields[1]
 	}
-	return &FileSource{shortcuts}
+	return &fileSource{shortcuts}
 }
 
-func (s *FileSource) Goto(str string) (string, error) {
-	val, err := s.expand(str)
+type fileSource struct {
+	shortcuts map[string]string
+}
+
+// Goto goes to the expanded destination if it exists on the filesystem.
+func (s *fileSource) Goto(dest string) (string, error) {
+	dir, err := s.expand(dest)
 	if err != nil {
-		return "", errors.New(fmt.Sprintf("No such shortcut %s", str))
+		return "", errors.New(fmt.Sprintf("No such shortcut %s", dest))
 	}
-	return val, err
+	return dir, nil
 }
 
-func (s *FileSource) Complete(prefix string) []string {
+// Complete returns recursive completion of all (sub)+directories of
+// the expanded prefix.
+func (s *fileSource) Complete(prefix string) []string {
 	var completions []string
 	for key := range s.shortcuts {
 		if strings.HasPrefix(key, prefix) {
@@ -64,7 +72,7 @@ func (s *FileSource) Complete(prefix string) []string {
 	return completions
 }
 
-func (s *FileSource) expand(str string) (string, error) {
+func (s *fileSource) expand(str string) (string, error) {
 	for key := range s.shortcuts {
 		if strings.HasPrefix(str, key) {
 			return s.shortcuts[key] + string(os.PathSeparator) + strings.TrimPrefix(str, key), nil
@@ -72,3 +80,5 @@ func (s *FileSource) expand(str string) (string, error) {
 	}
 	return "", errors.New(fmt.Sprintf("can't", str))
 }
+
+const whitespace = " \t"
